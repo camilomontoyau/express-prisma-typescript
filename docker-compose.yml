@@ -32,7 +32,8 @@ services:
       - ${PORT:-4000}:${PORT:-4000}
     networks:
       - prismapoc-local
-    command: /bin/bash -c "npm i && npm run db:migrate && npm run db:seed:all && npm run dev"
+    # command: /bin/bash -c "npm i && npm run db:migrate && npm run db:seed:all && npm run dev"
+    command: /bin/bash -c "npm i && npm run dev"
     depends_on:
       postgres:
         condition: service_healthy
