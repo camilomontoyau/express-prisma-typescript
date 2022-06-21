@@ -2,10 +2,89 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["interactiveTransactions"]
+  binaryTargets   = ["native", "darwin-arm64", "linux-musl", "linux-arm64-openssl-1.1.x"]
 }
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+model User {
+  id                  String             @id @default(uuid()) @db.Uuid
+  email               String             @unique
+  firstName           String?            @map("first_name")
+  lastName            String?            @map("last_name")
+  phoneNumber         String?            @map("phone_number")
+  status              Status?            @default(ACTIVE)
+  role                Roles?             @default(STUDENT)
+  createdAt           DateTime           @default(now()) @map("created_at")
+  updatedAt           DateTime?          @updatedAt @map("updated_at")
+  deletedAt           DateTime?          @map("deleted_at")
+  
+  classes             UserClasses[]
+  teachingAt          Class[]
+  
+  @@map("user")
+}
+
+model Course {
+  id                  String             @id @default(uuid()) @db.Uuid
+  name                String             @unique
+  createdAt           DateTime           @default(now()) @map("created_at")
+  updatedAt           DateTime?          @updatedAt @map("updated_at")
+  deletedAt           DateTime?          @map("deleted_at")
+  
+  classes             Class[]
+
+  @@map("course")
+}
+
+model Class {
+  id                  String             @id @default(uuid()) @db.Uuid
+  name                String             @unique
+  courseId            String             @map("course_id") @db.Uuid
+  teacher             String             @map("teacher") @db.Uuid
+  start               DateTime           @map("start")
+  end                 DateTime           @map("end")
+  createdAt           DateTime           @default(now()) @map("created_at")
+  updatedAt           DateTime?          @updatedAt @map("updated_at")
+  deletedAt           DateTime?          @map("deleted_at")
+  course              Course             @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  user                User               @relation(fields: [teacher], references: [id], onDelete: Cascade)
+  
+  students            UserClasses[]
+
+  @@map("class")
+}
+
+model UserClasses {
+  id                  String             @default(uuid()) @db.Uuid
+  userId              String             @map("user_id") @db.Uuid
+  classId             String             @map("class_id") @db.Uuid
+  user                User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  class               Class              @relation(fields: [classId], references: [id], onDelete: Cascade)
+  createdAt           DateTime           @default(now()) @map("created_at")
+  updatedAt           DateTime?          @updatedAt @map("updated_at")
+  deletedAt           DateTime?          @map("deleted_at")
+
+  @@id([userId, classId])
+  
+  @@map("user_classes")
+}
+
+enum Status {
+  ACTIVE
+  INACTIVE
+  DISABLED
+  @@map("status")
+}
+
+enum Roles {
+  STUDENT
+  TEACHER
+  ADMIN
+  @@map("roles")
 }
