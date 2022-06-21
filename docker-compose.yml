@@ -25,8 +25,7 @@ services:
       - ./:/usr/src/app
     environment:
       - PORT=${PORT:-4000}
-      - POSTGRES_URL=${POSTGRES_URL}
-      - KEYCLOAK_URL=${KEYCLOAK_URL}
+      - DATABASE_URL=${DATABASE_URL}
       - NODE_ENV=${NODE_ENV:-local}
     ports: 
       - ${PORT:-4000}:${PORT:-4000}
