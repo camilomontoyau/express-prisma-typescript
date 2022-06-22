@@ -4,7 +4,7 @@ import {
 } from '@prisma/client'
 import { v4 as uuidV4 } from 'uuid'
 
-const courses: Array<Course> = [
+const courses: Course[] = [
   {
     id: uuidV4(),
     name: faker.animal.dog(),
