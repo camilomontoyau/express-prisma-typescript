@@ -1,8 +1,9 @@
 // this follows what's recommended here https://planetscale.com/blog/how-to-seed-a-database-with-prisma-and-next-js
-import { Class, PrismaClient } from '@prisma/client'
+import { Class, PrismaClient, UserClasses } from '@prisma/client'
 import users from './seeds/users'
 import courses from './seeds/courses'
 import {generateClasses} from './seeds/classes'
+import { generateStudentsClasses } from './seeds/students-classes'
 
 const prisma = new PrismaClient();
 
@@ -32,12 +33,14 @@ const load = async () => {
       data: classes,
     })
     console.log('Classes successfuly seeded')
-
-
-
-
-
     
+    // add students to classes
+    console.log('Seeding students to classes....')
+    const studentsClasses: UserClasses[] = generateStudentsClasses(classes, users)
+    await prisma.userClasses.createMany({
+      data: studentsClasses,
+    })
+    console.log('Students successfuly added to classes')
     console.log('=== SEEDS END ===')
   } catch (e) {
       console.error(e);

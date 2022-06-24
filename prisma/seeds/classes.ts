@@ -16,7 +16,7 @@ export const generateClasses = (courses: Course[], users: User[] ) => {
     {
       id: uuidV4(),
       name: faker.animal.dog(),
-      courseId: courses[generateRandomNumber(0, 1)].id,
+      courseId: courses[generateRandomNumber(0, courses.length - 1)].id,
       teacher: teacher?.id || null,
       start: new Date(),
       end: new Date(),
@@ -27,7 +27,7 @@ export const generateClasses = (courses: Course[], users: User[] ) => {
     {
       id: uuidV4(),
       name: faker.animal.dog(),
-      courseId: courses[generateRandomNumber(0, 1)].id,
+      courseId: courses[generateRandomNumber(0, courses.length - 1)].id,
       teacher: teacher?.id || null,
       start: new Date(),
       end: new Date(),
