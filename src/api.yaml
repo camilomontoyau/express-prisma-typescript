@@ -1,0 +1,227 @@
+openapi: '3.0.0'
+info:
+  version: 0.0.1
+  title: express-prisma-typescript
+  description: API poc for evaluating api standards
+servers:
+  - url: /
+paths:
+  /users:
+    get:
+      description: get the list of users
+      operationId: getUsers
+      parameters:
+        - name: email
+          in: query
+          description: user's email
+          required: false
+          schema:
+            type: string
+        - name: first_name
+          in: query
+          description: user's first name
+          required: false
+          schema:
+            type: string
+        - name: last_name
+          in: query
+          description: user's last name
+          required: false
+          schema:
+            type: string
+        - name: role
+          in: query
+          description: user's role
+          required: false
+          schema:
+            type: string
+            enum:
+              - staff
+              - program_admin
+              - mentor
+        - name: program
+          in: query
+          description: program uuid
+          required: false
+          schema:
+            oneOf:
+              - $ref: '#/components/schemas/QueryParamUuid'
+              - $ref: '#/components/schemas/QueryParamObject'
+              - $ref: '#/components/schemas/QueryParamArray'
+      responses:
+        '200':
+          description: items list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      description: create new user
+      operationId: createUser
+      requestBody:
+        description: create new user
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '201':
+          description: user successfully added
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  
+  /users/{userId}:
+    delete:
+      description: delete a specific user from a given userId
+      operationId: deleteUser
+      parameters:
+        - name: userId
+          in: path
+          description: ID of the user
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: user successfully removed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TempResponse'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    put:
+      description: update user
+      operationId: updateUser
+      requestBody:
+        description: update an user
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '200':
+          description: user successfully added
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+components:
+  schemas:
+    Error:
+      required:
+        - error
+      properties:
+        error:
+          type: object
+          properties:
+            message:
+              type: string
+            errors:
+              type: array
+
+    ListResponse:
+      required:
+        - next
+        - total
+        - items 
+      properties:
+        next:
+          readOnly: true
+          type: number
+          nullable: true
+        total:
+          readOnly: true
+          type: number
+        items: 
+          readOnly: true
+          type: array
+
+    TempResponse:
+      required:
+        - message
+      properties:
+        message:
+          type: string
+          nullable: false
+
+    User:
+      properties:
+        id:
+          readOnly: true
+          type: string
+          format: uuid
+          nullable: false
+        email:
+          type: string
+        first_name:
+          type: string
+        last_name:
+          type: string
+        mdm_id:
+          readOnly: true
+          type: string
+          format: uuid
+          nullable: true
+        role:
+          type: string
+        created_at:
+          readOnly: true
+          type: string
+          format: date
+        updated_at:
+          readOnly: true
+          type: string
+          format: date
+        deleted_at:
+          readOnly: true
+          type: string
+          format: date
+          nullable: true
+        programs:
+          type: array
+          nullable: true
+
+    QueryParamUuid:
+      type: string
+      format: uuid
+
+    QueryParamObject:
+      type: object
+
+    QueryParamArray:
+      type: array
+
+    ResponseObject:
+      type: object
+    
+    ResponseArray:
+      type: array
