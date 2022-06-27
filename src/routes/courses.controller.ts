@@ -1,5 +1,9 @@
-import { Router, Request, Response } from "express";
-import { PrismaClient } from '@prisma/client'
+import { 
+  Request, 
+  Response, 
+  Router,
+} from "express";
+import { Prisma, PrismaClient } from '@prisma/client'
 import { 
   PrismaClientValidationError,
   PrismaClientKnownRequestError,
@@ -9,6 +13,15 @@ const prisma = new PrismaClient();
 
 const router = Router()
 
+
+const select: Prisma.CourseSelect = {
+  id: true,
+  name: true,
+  createdAt: true,
+  updatedAt: true,
+  deletedAt: false, // TODO: prisma doesn't have exclude only, you need to put truthies in order to put a falsy
+}
+
 router.get('/', async(_: Request, res: Response)=>{
   try {
     // TODO: handle query params here
@@ -17,7 +30,8 @@ router.get('/', async(_: Request, res: Response)=>{
       { 
         where: {
           deletedAt: null
-        }
+        },
+        select,
       }
     )
     res.status(200).json({
@@ -37,6 +51,7 @@ router.get('/:id', async(req, res)=>{
         id,
         deletedAt: null, // TODO: no soft delete in prisma
       },
+      select,
     })
     if(course) return res.status(200).json(course)
     res.status(404).send()
@@ -58,8 +73,8 @@ router.post('/', async (req, res)=>{
 
     const course = await prisma.course.create({
       data: req.body,
+      select,
     })
-
     res.status(201).json(course)  
   } catch (error: PrismaClientValidationError | any) {
     console.log(error) // TODO: define error logging
@@ -85,6 +100,7 @@ router.put('/:id', async (req, res)=>{
         data: {
           ...req.body,
         },
+        select,
       })
       return res.status(200).json(updatedCourse)
     } 

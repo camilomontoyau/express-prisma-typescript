@@ -16,7 +16,19 @@ router.get('/', async(_: Request, res: Response)=>{
       { 
         where: {
           deletedAt: null
-        }
+        },
+        select: {
+          id: true,
+          email: true,
+          firstName: true,
+          lastName: true,
+          phoneNumber: true,
+          status: true,
+          role: true,
+          createdAt: true,
+          updatedAt: true,
+          // TODO: this is a way to exclude deletedAt check the other at courses.controller.ts
+        },
       }
     )
     res.status(200).json({
@@ -36,6 +48,17 @@ router.get('/:id', async(req, res)=>{
         id,
         deletedAt: null, // TODO: no soft delete in prisma
       },
+      select: {
+        id: true,
+        email: true,
+        firstName: true,
+        lastName: true,
+        phoneNumber: true,
+        status: true,
+        role: true,
+        createdAt: true,
+        updatedAt: true,
+      }
     })
     if(user) return res.status(200).json(user)
     res.status(404).send()
@@ -59,6 +82,17 @@ router.post('/', async (req, res)=>{
       create: {
         ...req.body,
       },
+      select: {
+        id: true,
+        email: true,
+        firstName: true,
+        lastName: true,
+        phoneNumber: true,
+        status: true,
+        role: true,
+        createdAt: true,
+        updatedAt: true,
+      }
     })
     res.status(201).json(user)  
   } catch (error: PrismaClientValidationError | any) {
@@ -85,6 +119,17 @@ router.put('/:id', async (req, res)=>{
         data: {
           ...req.body,
         },
+        select: {
+          id: true,
+          email: true,
+          firstName: true,
+          lastName: true,
+          phoneNumber: true,
+          status: true,
+          role: true,
+          createdAt: true,
+          updatedAt: true,
+        }
       })
       return res.status(200).json(updatedUser)
     } 
