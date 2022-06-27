@@ -12,11 +12,16 @@ router.get('/', async(_: Request, res: Response)=>{
   try {
     // TODO: handle query params here
     // TODO: handle pagination
-    const allUsers = await prisma.user.findMany()
+    const allUsers = await prisma.user.findMany(
+      { 
+        where: {
+          deletedAt: null
+        }
+      }
+    )
     res.status(200).json({
       items: allUsers,
-      deletedAt: null // TODO: no soft delete in prisma
-    })  
+    })
   } catch (error: PrismaClientValidationError | any) {
     console.log(error) // TODO: define error logging
     return res.status(500).send()
