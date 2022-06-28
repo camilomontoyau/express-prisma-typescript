@@ -21,6 +21,14 @@ const select: Prisma.CourseSelect = {
   deletedAt: false, // TODO: prisma doesn't have exclude only, you need to put truthies in order to put a falsy
 }
 
+const selectClass: Prisma.ClassSelect = {
+  id: true,
+  name: true,
+  courseId: true,
+  createdAt: true,
+  updatedAt: true,
+}
+
 router.get('/', async(_: Request, res: Response)=>{
   try {
     // TODO: handle query params here
@@ -150,5 +158,47 @@ router.delete('/:id', async (req, res)=>{
 })
 
 // classes routes
+
+router.get('/:courseId/classes', async(req, res)=>{
+  try {
+    const courseId: string = req.params.courseId
+    const allCourseClasses = await prisma.class.findMany({
+      where: {
+        courseId,
+        deletedAt: null,
+      },
+      select: selectClass,
+    })
+    if(allCourseClasses) return res.status(200).json({
+      items: allCourseClasses
+    })
+    res.status(404).send()
+  } catch (error: PrismaClientValidationError | any) {
+    console.log(error) // TODO: define error logging
+    return res.status(500).send()
+  }
+})
+
+router.get('/:courseId/classes/:id', async(req, res)=>{
+  try {
+    const courseId: string = req.params.courseId
+    const id: string = req.params.id
+    const allCourseClasses = await prisma.class.findFirst({
+      where: {
+        id,
+        courseId,
+        deletedAt: null,
+      },
+      select: selectClass,
+    })
+    if(allCourseClasses) return res.status(200).json({
+      items: allCourseClasses
+    })
+    res.status(404).send()
+  } catch (error: PrismaClientValidationError | any) {
+    console.log(error) // TODO: define error logging
+    return res.status(500).send()
+  }
+})
 
 export default router
