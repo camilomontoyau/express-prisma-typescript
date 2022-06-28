@@ -13,7 +13,6 @@ const prisma = new PrismaClient();
 
 const router = Router()
 
-
 const select: Prisma.CourseSelect = {
   id: true,
   name: true,
@@ -45,7 +44,7 @@ router.get('/', async(_: Request, res: Response)=>{
 
 router.get('/:id', async(req, res)=>{
   try {
-    const { id }: { id?: string } = req.params
+    const { id } = req.params
     const course = await prisma.course.findFirst({
       where: {
         id,
@@ -149,5 +148,7 @@ router.delete('/:id', async (req, res)=>{
     return res.status(500).send()
   }
 })
+
+// classes routes
 
 export default router
