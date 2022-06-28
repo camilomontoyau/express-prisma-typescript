@@ -3,8 +3,6 @@ info:
   version: 0.0.1
   title: express-prisma-typescript
   description: API poc for evaluating api standards
-servers:
-  - url: /
 paths:
   /users:
     get:
@@ -17,18 +15,34 @@ paths:
           required: false
           schema:
             type: string
-        - name: first_name
+        - name: firstName
           in: query
           description: user's first name
           required: false
           schema:
             type: string
-        - name: last_name
+        - name: lastName
           in: query
           description: user's last name
           required: false
           schema:
             type: string
+        - name: phoneNumber
+          in: query
+          description: user's phone number
+          required: false
+          schema:
+            type: string
+        - name: status
+          in: query
+          description: user's status
+          required: false
+          schema:
+            type: string
+            enum:
+              - ACTIVE
+              - INACTIVE
+              - DISABLED
         - name: role
           in: query
           description: user's role
@@ -36,21 +50,12 @@ paths:
           schema:
             type: string
             enum:
-              - staff
-              - program_admin
-              - mentor
-        - name: program
-          in: query
-          description: program uuid
-          required: false
-          schema:
-            oneOf:
-              - $ref: '#/components/schemas/QueryParamUuid'
-              - $ref: '#/components/schemas/QueryParamObject'
-              - $ref: '#/components/schemas/QueryParamArray'
+              - STUDENT
+              - TEACHER
+              - DISABLED
       responses:
         '200':
-          description: items list
+          description: users list
           content:
             application/json:
               schema:
@@ -174,6 +179,9 @@ components:
           nullable: false
 
     User:
+      required:
+        - firstName
+        - lastName
       properties:
         id:
           readOnly: true
@@ -182,15 +190,10 @@ components:
           nullable: false
         email:
           type: string
-        first_name:
+        firstName:
           type: string
-        last_name:
+        lastName:
           type: string
-        mdm_id:
-          readOnly: true
-          type: string
-          format: uuid
-          nullable: true
         role:
           type: string
         created_at:
@@ -201,14 +204,25 @@ components:
           readOnly: true
           type: string
           format: date
-        deleted_at:
+
+    UsersList:
+      required:
+        - next
+        - total
+        - items 
+      properties:
+        next:
           readOnly: true
-          type: string
-          format: date
+          type: number
           nullable: true
-        programs:
+        total:
+          readOnly: true
+          type: number
+        items: 
           type: array
-          nullable: true
+          items:
+            $ref: '#/components/schemas/User'
+        
 
     QueryParamUuid:
       type: string

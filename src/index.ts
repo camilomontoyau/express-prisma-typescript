@@ -1,6 +1,6 @@
 import express from 'express'
 import cors from 'cors'
-// import * as OpenApiValidator from 'express-openapi-validator'
+import * as OpenApiValidator from 'express-openapi-validator'
 import path from 'path'
 import swaggerUi from 'swagger-ui-express'
 import YAML from 'yamljs'
@@ -10,18 +10,23 @@ app.use(cors())
 
 import routes from './routes'
 
+
+
+
+const apiSpec = YAML.load(path.join(__dirname, 'api.yaml'))
+console.log(JSON.stringify({apiSpec}, null, 2))
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(apiSpec))
+
+const openApiMiddleware = OpenApiValidator.middleware({
+  apiSpec,
+  validateRequests: true,
+  validateResponses: true,
+  validateApiSpec: true,
+})
+
+app.use(openApiMiddleware)
+
 app.use(routes)
-
-const swaggerDocument = YAML.load(path.join(__dirname, 'api.yaml'))
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument))
-
-/* app.use(
-  OpenApiValidator.middleware({
-    apiSpec: './api.yaml',
-    validateRequests: true, // (default)
-    validateResponses: true, // false by default
-  }),
-) */
 
 const PORT = 4000
 
