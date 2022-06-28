@@ -8,6 +8,7 @@ const app = express()
 app.use(express.json())
 app.use(cors())
 
+import errorHandler from './util/error.handler'
 import routes from './routes'
 
 
@@ -25,6 +26,8 @@ const openApiMiddleware = OpenApiValidator.middleware({
 })
 
 app.use(openApiMiddleware)
+
+app.use(errorHandler);
 
 app.use(routes)
 
