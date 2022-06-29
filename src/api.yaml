@@ -132,8 +132,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/User'
-        '404':
-          description: user not found
         default:
           description: unexpected error
           content:
@@ -150,8 +148,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/User'
-        '404':
-          description: user not found
         default:
           description: unexpected error
           content:
