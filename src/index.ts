@@ -27,7 +27,7 @@ const openApiMiddleware = OpenApiValidator.middleware({
 
 app.use(openApiMiddleware)
 
-app.use(errorHandler);
+app.use(errorHandler) //
 
 app.use(routes)
 
