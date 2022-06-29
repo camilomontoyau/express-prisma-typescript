@@ -103,12 +103,8 @@ paths:
             type: string
             format: uuid
       responses:
-        '200':
+        '204':
           description: user successfully removed
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/TempResponse'
         default:
           description: unexpected error
           content:
@@ -185,14 +181,6 @@ components:
         items: 
           readOnly: true
           type: array
-
-    TempResponse:
-      required:
-        - message
-      properties:
-        message:
-          type: string
-          nullable: false
 
     User:
       required:
