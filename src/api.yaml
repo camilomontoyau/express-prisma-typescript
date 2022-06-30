@@ -151,6 +151,115 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
+  /courses:
+    get:
+      description: get a list of courses
+      operationId: getCourses
+      parameters:
+        - name: name
+          in: query
+          description: course name
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: courses list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CoursesList'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      description: create new course
+      operationId: createCourse
+      requestBody:
+        description: create new course
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Course'
+      responses:
+        '201':
+          description: course successfully added
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Course'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  
+  /courses/{courseId}:
+    delete:
+      description: delete a specific course for a given userId
+      operationId: deleteCourse
+      parameters:
+        - name: courseId
+          in: path
+          description: ID of the course
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: course successfully removed
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    put:
+      description: update course
+      operationId: updateCourse
+      requestBody:
+        description: update/edit a course
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Course'
+      responses:
+        '200':
+          description: Course successfully updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Course'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    get:
+      description: get course by id
+      operationId: get-course-by-id
+      responses:
+        '200':
+          description: course found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Course'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
 components:
   schemas:
     Error:
@@ -208,6 +317,26 @@ components:
           readOnly: true
           type: string
           format: date
+    
+    Course:
+      required:
+        - name
+      properties:
+        id:
+          readOnly: true
+          type: string
+          format: uuid
+          nullable: false
+        name:
+          type: string
+        created_at:
+          readOnly: true
+          type: string
+          format: date
+        updated_at:
+          readOnly: true
+          type: string
+          format: date
 
     UsersList:
       required:
@@ -226,6 +355,24 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/User'
+    
+    CoursesList:
+      required:
+        - next
+        - total
+        - items 
+      properties:
+        next:
+          readOnly: true
+          type: number
+          nullable: true
+        total:
+          readOnly: true
+          type: number
+        items: 
+          type: array
+          items:
+            $ref: '#/components/schemas/Course'
         
 
     QueryParamUuid:

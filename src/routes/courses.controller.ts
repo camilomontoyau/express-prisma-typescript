@@ -33,6 +33,13 @@ router.get('/', async(_: Request, res: Response)=>{
   try {
     // TODO: handle query params here
     // TODO: handle pagination
+    const countCourses = await prisma.course.count(
+      {
+        where: {
+          deletedAt: null,
+        }
+      }
+    )
     const allCourses = await prisma.course.findMany(
       { 
         where: {
@@ -42,7 +49,9 @@ router.get('/', async(_: Request, res: Response)=>{
       }
     )
     res.status(200).json({
+      next: null, // TODO: pagination to be defined
       items: allCourses,
+      total: countCourses
     })  
   } catch (error: PrismaClientValidationError | any) {
     console.log(error) // TODO: define error logging
