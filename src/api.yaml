@@ -355,6 +355,7 @@ components:
     Error:
       required:
         - id
+        - message
       properties:
         id:
           readOnly: true
@@ -364,8 +365,10 @@ components:
           type: string
         errors:
           oneOf:
-            - $ref: '#/components/schemas/ResponseArray'
-            - $ref: '#/components/schemas/ResponseString'
+            - type: array
+              items: 
+                type: string
+            - type: string
 
         
     ListResponse:
