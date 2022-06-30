@@ -149,14 +149,15 @@ router.delete('/:id', async (req, res)=>{
           },
         }) 
       */
-      await prisma.course.update({
+      const result = await prisma.course.update({
         where: {
           id,
         },
         data: {
-          deletedAt: null,
+          deletedAt: new Date(),
         },
       })
+      console.log(JSON.stringify({result}))
       return res.status(204).send()
     } 
     res.status(404).send()
