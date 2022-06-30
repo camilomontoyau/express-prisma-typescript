@@ -285,6 +285,39 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+  
+  /courses/{courseId}/classes/{id}:
+    get:
+      description: get a class from a given course
+      operationId: getSigleCourseClass
+      parameters:
+        - name: courseId
+          in: path
+          description: ID of the course
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: id
+          in: path
+          description: ID of the class
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: class object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Class'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 
 components:
   schemas:

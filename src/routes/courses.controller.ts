@@ -149,7 +149,7 @@ router.delete('/:id', async (req, res)=>{
           },
         }) 
       */
-      const result = await prisma.course.update({
+      await prisma.course.update({
         where: {
           id,
         },
@@ -157,7 +157,6 @@ router.delete('/:id', async (req, res)=>{
           deletedAt: new Date(),
         },
       })
-      console.log(JSON.stringify({result}))
       return res.status(204).send()
     } 
     res.status(404).send()
@@ -210,14 +209,12 @@ router.get('/:courseId/classes/:id', async(req, res)=>{
       deletedAt: null,
     }
 
-    const allCourseClasses = await prisma.class.findFirst({
+    const courseClass = await prisma.class.findFirst({
       where,
       select: selectClass,
     })
 
-    if(allCourseClasses) return res.status(200).json({
-      items: allCourseClasses
-    })
+    if(courseClass) return res.status(200).json(courseClass)
     
     res.status(404).send()
   } catch (error: PrismaClientValidationError | any) {
