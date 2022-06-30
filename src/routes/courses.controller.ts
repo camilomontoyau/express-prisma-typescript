@@ -3,11 +3,13 @@ import {
   Response, 
   Router,
 } from "express";
-import { Prisma, PrismaClient } from '@prisma/client'
+import { Prisma, PrismaClient, Class, Roles } from '@prisma/client'
 import { 
   PrismaClientValidationError,
   PrismaClientKnownRequestError,
 } from '@prisma/client/runtime'
+
+import { v4 as uuidV4 } from "uuid";
 
 const prisma = new PrismaClient();
 
@@ -217,6 +219,72 @@ router.get('/:courseId/classes/:id', async(req, res)=>{
     if(courseClass) return res.status(200).json(courseClass)
     
     res.status(404).send()
+  } catch (error: PrismaClientValidationError | any) {
+    console.log(error) // TODO: define error logging
+    return res.status(500).send()
+  }
+})
+
+router.post('/:courseId/classes', async (req, res)=>{
+  try {
+    const { courseId }: { courseId?: string } = req.params
+    const { name }: { name?: string } = req.body
+
+    const existingCourse = await prisma.course.findFirst({
+      where: {
+        id: courseId,
+        deletedAt: null, // TODO: no soft delete in prisma
+      },
+    })
+
+    if(!existingCourse) {
+      return res.status(404).json({
+        id: uuidV4(),
+        message: 'course not found'
+      })
+    }
+
+
+    if(req.body.teacher) {
+      const existingTeacher = await prisma.user.findFirst({
+        where: {
+          id: req.body.teacher,
+          role: Roles.TEACHER,
+          deletedAt: null, // TODO: no soft delete in prisma
+        },
+      })
+      if(!existingTeacher) {
+        return res.status(404).json({
+          id: uuidV4(),
+          message: 'teacher not found'
+        })
+      }
+    }
+
+    const existingClass = await prisma.class.findFirst({////
+      where: {
+        courseId,
+        name,
+      },
+    })
+    if(existingClass) {
+      return res.status(409).json({
+        id: uuidV4(),
+        message: 'Duplicated class'
+      })
+    }
+
+    const newClassData: Class = {
+      ...req.body,
+      courseId,
+    }
+
+    const newClass = await prisma.class.create({
+      data: newClassData,
+      select: selectClass,
+    })
+
+    res.status(201).json(newClass)  
   } catch (error: PrismaClientValidationError | any) {
     console.log(error) // TODO: define error logging
     return res.status(500).send()

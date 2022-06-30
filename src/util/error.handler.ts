@@ -3,6 +3,7 @@ import { v4 as uuidV4 } from 'uuid'
 
 
 const errorHandler = (err: any, _req: Request, res: Response, _next: NextFunction) => {
+  console.log('=====errror handler=======')
   const status = err.status ?? 500
   const formatError = {
     id: uuidV4(),
