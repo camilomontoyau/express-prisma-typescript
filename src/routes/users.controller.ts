@@ -172,7 +172,7 @@ router.delete('/:id', async (req, res)=>{
           id,
         },
         data: {
-          deletedAt: null,
+          deletedAt: new Date(),
         },
       })
       return res.status(204).send()
