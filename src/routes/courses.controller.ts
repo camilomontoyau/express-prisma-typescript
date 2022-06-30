@@ -172,16 +172,25 @@ router.delete('/:id', async (req, res)=>{
 router.get('/:courseId/classes', async(req, res)=>{
   try {
     const courseId: string = req.params.courseId
+    
+    const where: Prisma.ClassWhereInput = {
+      courseId,
+      deletedAt: null,
+    }
+
+    const total = await prisma.class.count({ where })
+
     const allCourseClasses = await prisma.class.findMany({
-      where: {
-        courseId,
-        deletedAt: null,
-      },
+      where,
       select: selectClass,
     })
+
     if(allCourseClasses) return res.status(200).json({
-      items: allCourseClasses
+      next: null,
+      items: allCourseClasses,
+      total
     })
+
     res.status(404).send()
   } catch (error: PrismaClientValidationError | any) {
     console.log(error) // TODO: define error logging

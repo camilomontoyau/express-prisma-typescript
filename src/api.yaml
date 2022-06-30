@@ -260,6 +260,32 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
+  /courses/{courseId}/classes:
+    get:
+      description: get a list of classes for a given course
+      operationId: getCourseClasses
+      parameters:
+        - name: courseId
+          in: path
+          description: ID of the course
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: courses list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClassesList'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
 components:
   schemas:
     Error:
@@ -373,7 +399,59 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Course'
-        
+
+    Class:
+      required:
+        - name
+        - courseId
+      properties:
+        id:
+          readOnly: true
+          type: string
+          format: uuid
+          nullable: false
+        name:
+          type: string
+        courseId:
+          type: string
+          format: uuid
+          nullable: false
+        teacher:
+          type: string
+          format: uuid
+          nullable: true
+        start:
+          type: string
+          format: date
+        end:
+          type: string
+          format: date
+        created_at:
+          readOnly: true
+          type: string
+          format: date
+        updated_at:
+          readOnly: true
+          type: string
+          format: date
+
+    ClassesList:
+      required:
+        - next
+        - total
+        - items 
+      properties:
+        next:
+          readOnly: true
+          type: number
+          nullable: true
+        total:
+          readOnly: true
+          type: number
+        items: 
+          type: array
+          items:
+            $ref: '#/components/schemas/Class'
 
     QueryParamUuid:
       type: string
