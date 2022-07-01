@@ -291,4 +291,75 @@ router.post('/:courseId/classes', async (req, res)=>{
   }
 })
 
+router.put('/:courseId/classes/:id', async (req, res)=>{
+  try {
+    const { courseId, id }: { courseId?: string, id?: string } = req.params
+    
+    const existingCourse = await prisma.course.findFirst({
+      where: {
+        id: courseId,
+        deletedAt: null, // TODO: no soft delete in prisma
+      },
+    })
+
+    if(!existingCourse) {
+      return res.status(404).json({
+        id: uuidV4(),
+        message: 'course not found'
+      })
+    }
+
+    if(req.body.teacher) {
+      const existingTeacher = await prisma.user.findFirst({
+        where: {
+          id: req.body.teacher,
+          role: Roles.TEACHER,
+          deletedAt: null, // TODO: no soft delete in prisma
+        },
+      })
+      if(!existingTeacher) {
+        return res.status(404).json({
+          id: uuidV4(),
+          message: 'teacher not found'
+        })
+      }
+    }
+
+    const existingClass = await prisma.class.findFirst({
+      where: {
+        courseId,
+        id,
+        deletedAt: null,
+      },
+    })
+
+    if(!existingClass) {
+      return res.status(404).json({
+        id: uuidV4(),
+        message: 'Class not found'
+      })
+    }
+
+    const newClassData: Class = {
+      ...req.body,
+      courseId,
+      id,
+    }
+
+    const updatedClass = await prisma.class.create({
+      data: newClassData,
+      select: selectClass,
+    })
+
+    res.status(200).json(updatedClass)  
+  } catch (error: PrismaClientValidationError | PrismaClientKnownRequestError | any) {
+    console.log(error)
+    if ((error as PrismaClientKnownRequestError)?.code === 'P2002') {
+      console.log('duplicated course', JSON.stringify({...req.body}))
+      return res.status(409).send()
+    }
+    return res.status(500).send()
+  }
+})
+
 export default router
