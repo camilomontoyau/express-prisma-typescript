@@ -100,7 +100,6 @@ router.post('/', async (req, res)=>{
   }
 })
 
-
 router.put('/:id', async (req, res)=>{
   const { id }: { id?: string } = req.params
   try {
@@ -340,18 +339,24 @@ router.put('/:courseId/classes/:id', async (req, res)=>{
       })
     }
 
-    const newClassData: Class = {
+    const newDataForClass: Class = {
       ...req.body,
       courseId,
       id,
     }
 
-    const updatedClass = await prisma.class.create({
-      data: newClassData,
+    
+    const updatedCourse = await prisma.class.update({
+      where: {
+        id,
+      },
+      data: {
+        ...newDataForClass,
+      },
       select: selectClass,
     })
-
-    res.status(200).json(updatedClass)  
+    
+    res.status(200).json(updatedCourse)  
   } catch (error: PrismaClientValidationError | PrismaClientKnownRequestError | any) {
     console.log(error)
     if ((error as PrismaClientKnownRequestError)?.code === 'P2002') {
