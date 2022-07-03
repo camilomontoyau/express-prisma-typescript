@@ -7,11 +7,11 @@ import classesController from './classes.controller'
 
 const routes = [
   {
-    path: '/courses',
+    path: '/',
     controller: coursesController,
   },
   {
-    path: '/courses/:courseId/classes',
+    path: '/:courseId/classes',
     controller: classesController
   },
 ]

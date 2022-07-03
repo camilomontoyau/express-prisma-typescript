@@ -2,7 +2,7 @@ import { Router } from "express";
 
 const router = Router()
 
-import coursesController from './courses/courses.controller'
+import coursesController from './courses'
 import usersController from './users.controller'
 
 const routes = [
