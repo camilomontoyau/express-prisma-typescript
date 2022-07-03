@@ -24,7 +24,7 @@ const selectClass: Prisma.ClassSelect = {
 }
 
 
-router.get('/:courseId/classes', async(req: Request, res: Response)=>{
+router.get('/', async(req: Request, res: Response)=>{
   try {
     const courseId: string = req.params.courseId
 
@@ -53,7 +53,7 @@ router.get('/:courseId/classes', async(req: Request, res: Response)=>{
   }
 })
 
-router.get('/:courseId/classes/:id', async(req: Request, res: Response)=>{
+router.get('/:id', async(req: Request, res: Response)=>{
   try {
     const courseId: string = req.params.courseId
 
@@ -79,7 +79,7 @@ router.get('/:courseId/classes/:id', async(req: Request, res: Response)=>{
   }
 })
 
-router.post('/:courseId/classes', async (req: Request, res: Response)=>{
+router.post('/', async (req: Request, res: Response)=>{
   try {
     const { courseId }: { courseId?: string } = req.params
     const { name }: { name?: string } = req.body
@@ -145,7 +145,7 @@ router.post('/:courseId/classes', async (req: Request, res: Response)=>{
   }
 })
 
-router.put('/:courseId/classes/:id', async (req: Request, res: Response)=>{
+router.put('/:id', async (req: Request, res: Response)=>{
   try {
     const { courseId, id }: { courseId?: string, id?: string } = req.params
     
@@ -222,7 +222,7 @@ router.put('/:courseId/classes/:id', async (req: Request, res: Response)=>{
   }
 })
 
-router.delete('/:courseId/classes/:id', async(req: Request, res: Response)=>{
+router.delete('/:id', async(req: Request, res: Response)=>{
   try {
     const courseId: string = req.params.courseId
 
