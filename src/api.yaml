@@ -387,6 +387,33 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+    delete:
+      description: delete a specific class for a given course and classId
+      operationId: deleteClass
+      parameters:
+        - name: courseId
+          in: path
+          description: ID of the course
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: id
+          in: path
+          description: ID of the class
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: class successfully removed
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 
 components:
   schemas:

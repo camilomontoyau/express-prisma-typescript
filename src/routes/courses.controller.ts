@@ -367,4 +367,38 @@ router.put('/:courseId/classes/:id', async (req, res)=>{
   }
 })
 
+router.delete('/:courseId/classes/:id', async(req, res)=>{
+  try {
+    const courseId: string = req.params.courseId
+
+    const id: string = req.params.id
+
+    const where: Prisma.ClassWhereInput = {
+      id,
+      courseId,
+      deletedAt: null,
+    }
+
+    const courseClass = await prisma.class.findFirst({
+      where,
+      select: selectClass,
+    })
+
+    if(!courseClass) return res.status(404).send()
+
+    await prisma.class.update({
+      where: {
+        id,
+      },
+      data: {
+        deletedAt: new Date(),
+      },
+    })
+    return res.status(204).send()
+  } catch (error: PrismaClientValidationError | any) {
+    console.log(error) // TODO: define error logging
+    return res.status(500).send()
+  }
+})
+
 export default router
