@@ -414,6 +414,38 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+  /courses/{courseId}/classes/{classId}/students:
+    get:
+      description: get the list of students in a class
+      operationId: getStudentsInClass
+      parameters:
+        - name: courseId
+          in: path
+          description: ID of the course
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: classId
+          in: path
+          description: ID of the class
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: class object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsersList'
+        default:
+          description: unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 
 components:
   schemas:
