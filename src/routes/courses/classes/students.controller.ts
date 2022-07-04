@@ -3,10 +3,15 @@ import {
   Response, 
   Router,
 } from "express";
-import { Prisma, PrismaClient, Class, Roles, Course } from '@prisma/client'
+import { 
+  /* Prisma, */ 
+  PrismaClient, 
+  Class, /* Roles, */ 
+  Course 
+} from '@prisma/client'
 import { 
   PrismaClientValidationError,
-  PrismaClientKnownRequestError,
+  //PrismaClientKnownRequestError,
 } from '@prisma/client/runtime'
 
 import { v4 as uuidV4 } from "uuid";
@@ -15,20 +20,20 @@ const prisma = new PrismaClient();
 
 const router = Router({ mergeParams: true })
 
-const select: Prisma.UserSelect = {
+/* const select: Prisma.UserSelect = {
   id: true,
   firstName: true,
   lastName: true,
   email: true,
   createdAt: true,
   updatedAt: true,
-}
+} */
 
 
 router.get('/', async(req: Request, res: Response)=>{
   try {
     const courseId: string = req.params.courseId
-    // const classId: string = req.params.classId
+    const classId: string = req.params.classId
 
     // check course exists 
     const existingCourse: Course | null = await prisma.course.findFirst({
@@ -45,16 +50,39 @@ router.get('/', async(req: Request, res: Response)=>{
       })
     }
 
-    const total: number = await prisma.class.count({ where })
-
-    const allCourseClasses = await prisma.class.findMany({
-      where,
-      select: selectClass,
+    const existingClass: Class | null = await prisma.class.findFirst({
+      where: {
+        id: classId,
+        courseId,
+        deletedAt: null
+      }
     })
 
-    if(allCourseClasses) return res.status(200).json({
+    if(!existingClass) {
+      return res.status(404).json({
+        id: uuidV4(),
+        message: 'class not found'
+      })
+    }
+
+    const total: number = await prisma.userClasses.count({ 
+      where: {
+        classId
+      } 
+    })
+
+    const allClassStudents = await prisma.userClasses.findMany({
+      where: {
+        classId
+      },
+      include: {
+        user: true
+      }
+    })
+
+    if(allClassStudents) return res.status(200).json({
       next: null,
-      items: allCourseClasses,
+      items: allClassStudents,
       total
     })
 
@@ -64,6 +92,8 @@ router.get('/', async(req: Request, res: Response)=>{
     return res.status(500).send()
   }
 })
+
+/*
 
 router.get('/:id', async(req: Request, res: Response)=>{
   try {
@@ -267,5 +297,6 @@ router.delete('/:id', async(req: Request, res: Response)=>{
     return res.status(500).send()
   }
 })
+*/
 
 export default router
