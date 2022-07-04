@@ -86,7 +86,6 @@ router.get('/', async(req: Request, res: Response)=>{
     })
 
     if(allClassStudents) {
-      console.log(JSON.stringify({allClassStudents}, null, 2))
       return res.status(200).json({
         next: null,
         items: allClassStudents.map(({user})=>user),
