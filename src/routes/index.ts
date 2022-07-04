@@ -16,6 +16,7 @@ const routes = [
   },
 ]
 
+console.log('creating main routes')
 routes.forEach(({ path, controller }) => {
   router.use(path, controller)
   console.log(`route created ${path}`)
