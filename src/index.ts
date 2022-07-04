@@ -15,7 +15,6 @@ import routes from './routes'
 
 
 const apiSpec = YAML.load(path.join(__dirname, 'api.yaml'))
-console.log(JSON.stringify({apiSpec}, null, 2))
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(apiSpec))
 
 const openApiMiddleware = OpenApiValidator.middleware({
