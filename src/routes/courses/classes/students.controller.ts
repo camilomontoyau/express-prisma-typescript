@@ -4,7 +4,7 @@ import {
   Router,
 } from "express";
 import { 
-  /* Prisma, */ 
+  Prisma,
   PrismaClient, 
   Class, /* Roles, */ 
   Course 
@@ -20,14 +20,14 @@ const prisma = new PrismaClient();
 
 const router = Router({ mergeParams: true })
 
-/* const select: Prisma.UserSelect = {
+const select: Prisma.UserSelect = {
   id: true,
   firstName: true,
   lastName: true,
   email: true,
   createdAt: true,
   updatedAt: true,
-} */
+}
 
 
 router.get('/', async(req: Request, res: Response)=>{
@@ -65,26 +65,34 @@ router.get('/', async(req: Request, res: Response)=>{
       })
     }
 
+    const where: Prisma.UserClassesWhereInput = {
+      classId,
+      user: {
+        deletedAt: null
+      }
+    }
+
     const total: number = await prisma.userClasses.count({ 
-      where: {
-        classId
-      } 
+      where,
     })
 
     const allClassStudents = await prisma.userClasses.findMany({
-      where: {
-        classId
-      },
-      include: {
-        user: true
+      where,
+      select: {
+        user: {
+          select
+        }
       }
     })
 
-    if(allClassStudents) return res.status(200).json({
-      next: null,
-      items: allClassStudents,
-      total
-    })
+    if(allClassStudents) {
+      console.log(JSON.stringify({allClassStudents}, null, 2))
+      return res.status(200).json({
+        next: null,
+        items: allClassStudents.map(({user})=>user),
+        total
+      })
+    }
 
     res.status(404).send()
   } catch (error: PrismaClientValidationError | any) {
